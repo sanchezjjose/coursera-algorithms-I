@@ -19,8 +19,8 @@ public class PercolationStats {
 
       // randomly open sites until it percolates
       while (!p.percolates()) {
-        int siteRow = StdRandom.uniform(1, N);
-        int siteColumn = StdRandom.uniform(1, N);
+        int siteRow = StdRandom.uniform(1, N + 1);
+        int siteColumn = StdRandom.uniform(1, N + 1);
 
         if (!p.isOpen(siteRow, siteColumn)) {
           p.open(siteRow, siteColumn);
@@ -56,7 +56,7 @@ public class PercolationStats {
   // test client (described below)
   public static void main(String[] args) {
 
-    int N = 4;
+    int N = 20;
     int T = 10;
 
     PercolationStats pStats = new PercolationStats(N, T);
