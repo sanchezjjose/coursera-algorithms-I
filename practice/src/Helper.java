@@ -1,5 +1,3 @@
-package com.coursera.algorithmsI;
-
 
 public class Helper {
 

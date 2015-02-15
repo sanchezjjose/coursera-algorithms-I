@@ -103,48 +103,4 @@ public class Percolation {
     // we say the system percolates
     return wqu.connected(virtualTopIndex, virtualBottomIndex);
   }
-
-
-  public static void printTest(Percolation p, int i, int j) {
-    p.open(i, j);
-
-    StdOut.println("i = " + i + ", j = " + j);
-    StdOut.println("isOpen = " + p.isOpen(i, j));
-    StdOut.println("isFull = " + p.isFull(i, j));
-    StdOut.println("percolates = " + p.percolates());
-    StdOut.println("===================");
-  }
-
-  public static void main(String[] args) {
-
-//    int N = 10;
-//    Percolation p = new Percolation(N);
-//
-//    printTest(p, 1, 6);
-//    printTest(p, 2, 6);
-//    printTest(p, 3, 6);
-//    printTest(p, 4, 6);
-//    printTest(p, 5, 6);
-//    printTest(p, 5, 5);
-//    printTest(p, 4, 4);
-//    printTest(p, 3, 4);
-//    printTest(p, 2, 4);
-//    printTest(p, 2, 3);
-//    printTest(p, 2, 2);
-//    printTest(p, 2, 1);
-//    printTest(p, 3, 1);
-//    printTest(p, 4, 1);
-//    printTest(p, 5, 1);
-//    printTest(p, 5, 2);
-//    printTest(p, 6, 2);
-//    printTest(p, 5, 4);
-
-    int N = 3;
-    Percolation p = new Percolation(N);
-
-    printTest(p, 1, 6);
-    printTest(p, 2, 6);
-    printTest(p, 3, 6);
-    printTest(p, 4, 6);
-  }
 }

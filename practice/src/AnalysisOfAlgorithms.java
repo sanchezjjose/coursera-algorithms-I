@@ -1,5 +1,3 @@
-package com.coursera.algorithmsI.practice;
-
 public class AnalysisOfAlgorithms {
 
   public static void main(String args[]) {
