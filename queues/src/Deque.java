@@ -13,13 +13,15 @@ public class Deque<Item> implements Iterable<Item> {
 
   private Node first;
   private Node last;
-  private int N = 0;
+  private int N = 0; // Represents size of Deque
 
   private class Node {
     Item item;
     Node next;
     Node prev;
   }
+
+  public Deque() { }
 
   // is the deque empty?
   public boolean isEmpty() {
@@ -41,6 +43,7 @@ public class Deque<Item> implements Iterable<Item> {
     first.next = oldFirst;
 
     if (isEmpty()) last = first;
+    else           oldFirst.prev = first;
 
     N++; // Initially -- now becomes 1
   }
@@ -53,6 +56,7 @@ public class Deque<Item> implements Iterable<Item> {
     last = new Node();
     last.item = item;
     last.next = null;
+    last.prev = oldLast;
 
     if (isEmpty()) first = last;
     else           oldLast.next = last;
@@ -68,7 +72,8 @@ public class Deque<Item> implements Iterable<Item> {
     first = first.next; // if there were 2 items before removing, this covers first = last
     N--;
 
-    if (isEmpty()) last = null;
+    if (isEmpty()) last = first; // first will be null
+    else           first.prev = null;
 
     return firstItem;
   }
@@ -81,7 +86,8 @@ public class Deque<Item> implements Iterable<Item> {
     last = last.prev; // if there were 2 items before removing, this covers first = last
     N--;
 
-    if (isEmpty()) first = null;
+    if (isEmpty()) first = last; // last will be null
+    else           last.next = null;
 
     return lastItem;
   }
@@ -115,48 +121,42 @@ public class Deque<Item> implements Iterable<Item> {
   // unit testing
   public static void main(String[] args) {
 
-    Deque<String> deque1 = new Deque<String>();
+    Deque<String> dq1 = new Deque<String>();
 
-    StdOut.println(deque1.isEmpty());
+    dq1.addFirst("hi");
+    dq1.removeLast();
 
-    deque1.addFirst("hi");
+    dq1.addLast("hi");
+    dq1.removeFirst();
 
-    StdOut.println(deque1.size());
-    StdOut.println(deque1.isEmpty());
+    dq1.addFirst("hi");
+    dq1.addLast("you");
 
-    deque1.removeLast();
-
-    StdOut.println(deque1.size());
-    StdOut.println(deque1.isEmpty());
-
-    deque1.addLast("hi");
-
-    StdOut.println(deque1.size());
-    StdOut.println(deque1.isEmpty());
-
-    deque1.removeFirst();
-
-    StdOut.println(deque1.size());
-    StdOut.println(deque1.isEmpty());
-
-    deque1.addFirst("hi");
-    deque1.addLast("you");
-
-    StdOut.println(deque1.size());
-    StdOut.println(deque1.isEmpty());
-
-    for (Iterator<String> it = deque1.iterator(); it.hasNext();) {
-      StdOut.println(it.next());
+    for (String s : dq1) {
+      StdOut.println(s);
     }
 
-    deque1.removeFirst();
-    deque1.removeLast();
+    dq1.removeFirst();
+    dq1.removeLast();
 
-    StdOut.println(deque1.size());
-    StdOut.println(deque1.isEmpty());
+    dq1.addLast("hi");
 
-    for (Iterator<String> it = deque1.iterator(); it.hasNext();) {
-      StdOut.println(it.next());
+    for (String s : dq1) {
+      StdOut.println(s);
+    }
+
+    for (int i = 0; i < 50; i++)
+      dq1.addFirst("" + i);
+
+    for (int i = 0; i < 50; i++) {
+      StdOut.println(dq1.removeFirst());
+    }
+
+    for (int i = 0; i < 50; i++)
+      dq1.addFirst("" + i);
+
+    for (int i = 0; i < 50; i++) {
+      StdOut.println(dq1.removeLast());
     }
   }
 }
