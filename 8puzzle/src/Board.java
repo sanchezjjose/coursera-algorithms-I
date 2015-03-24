@@ -1,4 +1,6 @@
 
+import java.util.Arrays;
+
 public class Board {
 
   private int[] blocks1D;
@@ -94,7 +96,20 @@ public class Board {
   // does this board equal y?
   public boolean equals(Object y) {
     Board that = (Board) y;
-    return this.hashCode() == that.hashCode();
+//
+//    if (this.N != that.N) {
+//      return false;
+//    }
+//
+//    for (int i = 0; i < N; i++) {
+//      if (this.blocks1D[i] != that.blocks1D[i]) {
+//        return false;
+//      }
+//    }
+//
+//    return true;
+
+    return Arrays.equals(this.blocks1D, that.blocks1D);
   }
 
   // all neighboring boards
@@ -165,10 +180,19 @@ public class Board {
             {7,6,5}
     };
 
+    int[][] copyOfInitialBlocks = new int[][] {
+            {8,1,3},
+            {4,0,2},
+            {7,6,5}
+    };
+
     Board board = new Board(initialBlocks);
+    Board board2 = new Board(copyOfInitialBlocks);
 
     System.out.println(board.toString());
     System.out.println(board.hamming());
     System.out.println(board.manhattan());
+
+    System.out.println(board.equals(board2));
   }
 }
