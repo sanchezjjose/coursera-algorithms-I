@@ -10,18 +10,18 @@ public class Board {
 
   // construct a board from an N-by-N array of blocks
   // (where blocks[i][j] = block in row i, column j)
-  public Board(int[][] blocks) {
+  public Board(int[][] blocks2D) {
 
-    this.N = blocks.length;
+    this.N = blocks2D.length;
     this.size = N * N;
-    this.width = blocks[0].length;
+    this.width = blocks2D[0].length;
     this.blocks1D = new int[size];
 
     int k = 0;
 
     for (int i = 0; i < N; i++) {
       for (int j = 0; j < N; j++) {
-        this.blocks1D[k++] = blocks[i][j];
+        this.blocks1D[k++] = blocks2D[i][j];
       }
     }
   }
@@ -35,7 +35,7 @@ public class Board {
   public int hamming() {
     int distance = 0;
 
-    for (int i = 0; i < blocks1D.length; i++) {
+    for (int i = 0; i < size; i++) {
       int blockIndex = i + 1;
       int blockValue = blocks1D[i];
 
@@ -51,7 +51,7 @@ public class Board {
   public int manhattan() {
     int distance = 0;
 
-    for (int i = 0; i < blocks1D.length; i++) {
+    for (int i = 0; i < size; i++) {
       int blockIndex = i + 1;
       int blockValue = blocks1D[i];
 
@@ -72,13 +72,7 @@ public class Board {
 
   // is this board the goal board?
   public boolean isGoal() {
-    for (int i = 0; i < blocks1D.length; i++) {
-      if (blocks1D[i] != i+1 && blocks1D[size - 1] != 0) {
-        return false;
-      }
-    }
-
-    return true;
+    return hamming() == 0;
   }
 
   // a board that is obtained by exchanging two adjacent blocks in the same row
@@ -101,7 +95,7 @@ public class Board {
   public String toString() {
     StringBuilder s = new StringBuilder();
     s.append(N + "\n");
-    for (int i = 1; i <= blocks1D.length; i++) {
+    for (int i = 1; i <= size; i++) {
       s.append(String.format("%2d ", blocks1D[i - 1]));
 
       if (i % N == 0) {
@@ -177,9 +171,15 @@ public class Board {
     Board goalBoard = new Board(goalBlocks);
 
     System.out.println(board.toString());
+
     System.out.println(board.hamming());
     System.out.println(board.manhattan());
+
+    System.out.println(goalBoard.hamming());
+    System.out.println(goalBoard.manhattan());
+
     System.out.println(board.equals(boardCopy));
+
     System.out.println(board.isGoal());
     System.out.println(goalBoard.isGoal());
   }
