@@ -3,26 +3,35 @@ import java.util.Arrays;
 
 public class Board {
 
-  private int[] blocks1D;
-  private int N;
-  private int size;
-  private int width; // the width of an array (i.e., a 3x5 array has width 3)
+  private int[] board; // array is the board, the indices are the blocks
+  private int N; // the width of an array (i.e., a 3x5 array has width 3)
+  private int size; // size of the board
 
   // construct a board from an N-by-N array of blocks
   // (where blocks[i][j] = block in row i, column j)
   public Board(int[][] blocks2D) {
-
-    this.N = blocks2D.length;
+    this.N = blocks2D.length; // blocks2D[0].length;
     this.size = N * N;
-    this.width = blocks2D[0].length;
-    this.blocks1D = new int[size];
+    this.board = new int[size];
 
     int k = 0;
 
     for (int i = 0; i < N; i++) {
       for (int j = 0; j < N; j++) {
-        this.blocks1D[k++] = blocks2D[i][j];
+        this.board[k++] = blocks2D[i][j];
       }
+    }
+  }
+
+  private Board(int[] blocks1D, int width) {
+    this.N = width;
+    this.size = blocks1D.length;
+    this.board = new int[size];
+
+    int k = 0;
+
+    for (int i = 0; i < size; i++) {
+      this.board[k++] = blocks1D[i];
     }
   }
 
@@ -37,7 +46,7 @@ public class Board {
 
     for (int i = 0; i < size; i++) {
       int blockIndex = i + 1;
-      int blockValue = blocks1D[i];
+      int blockValue = board[i];
 
       if (blockValue != 0 && blockValue != blockIndex) {
         distance++;
@@ -53,7 +62,7 @@ public class Board {
 
     for (int i = 0; i < size; i++) {
       int blockIndex = i + 1;
-      int blockValue = blocks1D[i];
+      int blockValue = board[i];
 
       if (blockValue != 0 && blockValue != blockIndex) {
         Coordinates wrongPos = convert1Dto2D(blockIndex);
@@ -77,17 +86,47 @@ public class Board {
 
   // a board that is obtained by exchanging two adjacent blocks in the same row
   public Board twin() {
-    return null;
+    Board twinBoard = new Board(this.board, this.N);
+
+    for (int i = 0; i < size; i++) {
+//      Integer topBlock = (i - N >= 0 && board[i - N] != 0) ? board[i - N] : null;
+//      Integer bottomBlock = (i + N <= size && board[i + N] != 0) ? board[i + N] : null;
+
+      Integer leftBlock = (i - 1 >= 0 && twinBoard.board[i - 1] != 0) ? twinBoard.board[i - 1] : null;
+      Integer rightBlock = (i + 1 <= size && twinBoard.board[i + 1] != 0) ? twinBoard.board[i + 1] : null;
+
+//      if (topBlock != null) swap(i, i - N);
+//      else if (bottomBlock != null) swap(i, i + N);
+
+      if (leftBlock != null) {
+        swap(twinBoard, i, i - 1);
+        break;
+      } else if (rightBlock != null) {
+        swap(twinBoard, i, i + 1);
+        break;
+      }
+    }
+
+    return twinBoard;
+  }
+
+  private void swap(Board board, int i, int j) {
+    int temp = board.board[i];
+    board.board[i] = board.board[j];
+    board.board[j] = temp;
   }
 
   // does this board equal y?
   public boolean equals(Object y) {
     Board that = (Board) y;
-    return Arrays.equals(this.blocks1D, that.blocks1D);
+    return Arrays.equals(this.board, that.board);
   }
 
   // all neighboring boards
   public Iterable<Board> neighbors() {
+
+
+
     return null;
   }
 
@@ -96,17 +135,13 @@ public class Board {
     StringBuilder s = new StringBuilder();
     s.append(N + "\n");
     for (int i = 1; i <= size; i++) {
-      s.append(String.format("%2d ", blocks1D[i - 1]));
+      s.append(String.format("%2d ", board[i - 1]));
 
       if (i % N == 0) {
         s.append("\n");
       }
     }
     return s.toString();
-  }
-
-  private int convert2Dto1D(int row, int column) {
-    return (row - 1) * width + column;
   }
 
   private Coordinates convert1Dto2D(int index) {
@@ -116,16 +151,14 @@ public class Board {
       c = new Coordinates(N-1, N-1);
 
     } else {
-//      int row = Math.abs(index / width);
-//      int col = Math.abs(index % width);
-
       int k = 1;
 
-      // TODO: use equation (above) rather then traversal method
-      for (int i = 0; i < width; i++) {
-        for (int j = 0; j < width; j++) {
+      out:
+      for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
           if (index == k) {
             c = new Coordinates(i, j);
+            break out;
           }
           k++;
         }
@@ -182,5 +215,8 @@ public class Board {
 
     System.out.println(board.isGoal());
     System.out.println(goalBoard.isGoal());
+
+    Board twinBoard = board.twin();
+    System.out.println(twinBoard.toString());
   }
 }

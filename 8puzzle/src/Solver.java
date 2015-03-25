@@ -61,31 +61,36 @@ public class Solver {
 
   // sequence of boards in a shortest solution; null if unsolvable
   public Iterable<Board> solution() {
-    MinPQ<SearchNode> searchNodePQ = new MinPQ<SearchNode>();
-    Iterator<SearchNode> searchNodeItr = searchNodePQ.iterator();
-    Set<Integer> boardHashCodes = new HashSet<Integer>();
+    if (isSolvable()) {
+      MinPQ<SearchNode> searchNodePQ = new MinPQ<SearchNode>();
+      Iterator<SearchNode> searchNodeItr = searchNodePQ.iterator();
+      Set<Integer> boardHashCodes = new HashSet<Integer>();
 
-    searchNodePQ.insert(new SearchNode(initial, null, 0));
+      searchNodePQ.insert(new SearchNode(initial, null, 0));
 
-    while (searchNodeItr.hasNext()) {
-      SearchNode currentSearchNode = searchNodeItr.next();
-      SearchNode minSearchNode = searchNodePQ.delMin();
+      while (searchNodeItr.hasNext()) {
+        SearchNode currentSearchNode = searchNodeItr.next();
+        SearchNode minSearchNode = searchNodePQ.delMin();
 
-      solutionBoards.push(minSearchNode.getBoard());
-      boardHashCodes.add(currentSearchNode.hashCode());
+        solutionBoards.push(minSearchNode.getBoard());
+        boardHashCodes.add(currentSearchNode.hashCode());
 
-      if (minSearchNode.getBoard().isGoal()) {
-        break;
-      }
+        if (minSearchNode.getBoard().isGoal()) {
+          break;
+        }
 
-      for (Board b : currentSearchNode.getBoard().neighbors()) {
-        if (!boardHashCodes.contains(b.hashCode())) {
-          searchNodePQ.insert(new SearchNode(b, currentSearchNode, currentSearchNode.getMoves() + 1));
+        for (Board b : currentSearchNode.getBoard().neighbors()) {
+          if (!boardHashCodes.contains(b.hashCode())) {
+            searchNodePQ.insert(new SearchNode(b, currentSearchNode, currentSearchNode.getMoves() + 1));
+          }
         }
       }
-    }
 
-    return solutionBoards;
+      return solutionBoards;
+
+    } else {
+      return null;
+    }
   }
 
   // solve a slider puzzle (given below)
