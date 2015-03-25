@@ -120,10 +120,46 @@ public class Board {
 
   // all neighboring boards
   public Iterable<Board> neighbors() {
+    Stack<Board> boardStack = new Stack<Board>();
+    int zeroIndex = -1;
 
+    for (int i = 0; i < size; i++) {
+      if (board[i] == 0) {
+        zeroIndex = i;
+        break;
+      }
+    }
 
+    Integer topBlock = (zeroIndex - N >= 0 && board[zeroIndex - N] != 0) ? board[zeroIndex - N] : null;
+    Integer bottomBlock = (zeroIndex + N <= size && board[zeroIndex + N] != 0) ? board[zeroIndex + N] : null;
+    Integer leftBlock = (zeroIndex - 1 >= 0 && board[zeroIndex - 1] != 0) ? board[zeroIndex - 1] : null;
+    Integer rightBlock = (zeroIndex + 1 <= size && board[zeroIndex + 1] != 0) ? board[zeroIndex + 1] : null;
 
-    return null;
+    if (topBlock != null) {
+      Board topBoard = new Board(this.board, this.N);
+      swap(topBoard, zeroIndex, zeroIndex - N);
+      boardStack.push(topBoard);
+    }
+
+    if (bottomBlock != null) {
+      Board bottomBoard = new Board(this.board, this.N);
+      swap(bottomBoard, zeroIndex, zeroIndex + N);
+      boardStack.push(bottomBoard);
+    }
+
+    if (leftBlock != null) {
+      Board leftBoard = new Board(this.board, this.N);
+      swap(leftBoard, zeroIndex, zeroIndex - 1);
+      boardStack.push(leftBoard);
+    }
+
+    if (rightBlock != null) {
+      Board rightBoard = new Board(this.board, this.N);
+      swap(rightBoard, zeroIndex, zeroIndex + 1);
+      boardStack.push(rightBoard);
+    }
+
+    return boardStack;
   }
 
   // string representation of this board (in the output format specified below)
@@ -214,5 +250,9 @@ public class Board {
 
     Board twinBoard = board.twin();
     System.out.println(twinBoard.toString());
+
+    for (Board neighbor : board.neighbors()) {
+      System.out.println(neighbor);
+    }
   }
 }
