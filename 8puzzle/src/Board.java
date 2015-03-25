@@ -89,14 +89,10 @@ public class Board {
     Board twinBoard = new Board(this.board, this.N);
 
     for (int i = 0; i < size; i++) {
-//      Integer topBlock = (i - N >= 0 && board[i - N] != 0) ? board[i - N] : null;
-//      Integer bottomBlock = (i + N <= size && board[i + N] != 0) ? board[i + N] : null;
+      if (twinBoard.board[i] == 0 || i % N == 0 || i % N == N - 1) continue;
 
       Integer leftBlock = (i - 1 >= 0 && twinBoard.board[i - 1] != 0) ? twinBoard.board[i - 1] : null;
       Integer rightBlock = (i + 1 <= size && twinBoard.board[i + 1] != 0) ? twinBoard.board[i + 1] : null;
-
-//      if (topBlock != null) swap(i, i - N);
-//      else if (bottomBlock != null) swap(i, i + N);
 
       if (leftBlock != null) {
         swap(twinBoard, i, i - 1);
@@ -182,14 +178,14 @@ public class Board {
   public static void main(String[] args) {
 
     int[][] initialBlocks = new int[][] {
-            {8,1,3},
-            {4,0,2},
+            {8,0,3},
+            {4,1,2},
             {7,6,5}
     };
 
     int[][] copyOfInitialBlocks = new int[][] {
-            {8,1,3},
-            {4,0,2},
+            {8,0,3},
+            {4,1,2},
             {7,6,5}
     };
 
