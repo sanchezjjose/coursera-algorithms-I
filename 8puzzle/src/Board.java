@@ -131,9 +131,9 @@ public class Board {
     }
 
     Integer topBlock = (zeroIndex - N >= 0 && board[zeroIndex - N] != 0) ? board[zeroIndex - N] : null;
-    Integer bottomBlock = (zeroIndex + N <= size && board[zeroIndex + N] != 0) ? board[zeroIndex + N] : null;
+    Integer bottomBlock = (zeroIndex + N < size && board[zeroIndex + N] != 0) ? board[zeroIndex + N] : null;
     Integer leftBlock = (zeroIndex - 1 >= 0 && board[zeroIndex - 1] != 0) ? board[zeroIndex - 1] : null;
-    Integer rightBlock = (zeroIndex + 1 <= size && board[zeroIndex + 1] != 0) ? board[zeroIndex + 1] : null;
+    Integer rightBlock = (zeroIndex + 1 < size && board[zeroIndex + 1] != 0) ? board[zeroIndex + 1] : null;
 
     if (topBlock != null) {
       Board topBoard = new Board(this.board, this.N);
