@@ -10,7 +10,7 @@ public class Board {
   // construct a board from an N-by-N array of blocks
   // (where blocks[i][j] = block in row i, column j)
   public Board(int[][] blocks2D) {
-    this.N = blocks2D.length; // blocks2D[0].length;
+    this.N = blocks2D.length;
     this.size = N * N;
     this.board = new int[size];
 
@@ -89,16 +89,16 @@ public class Board {
     Board twinBoard = new Board(this.board, this.N);
 
     for (int i = 0; i < size; i++) {
-      if (twinBoard.board[i] == 0 || i % N == 0 || i % N == N - 1) continue;
+      if (twinBoard.board[i] == 0) continue;
 
-      Integer leftBlock = (i - 1 >= 0 && twinBoard.board[i - 1] != 0) ? twinBoard.board[i - 1] : null;
-      Integer rightBlock = (i + 1 <= size && twinBoard.board[i + 1] != 0) ? twinBoard.board[i + 1] : null;
+      int leftBlockIndex = i - 1;
+      int rightBlockIndex = i + 1;
 
-      if (leftBlock != null) {
-        swap(twinBoard, i, i - 1);
+      if (leftBlockIndex >= 0 && leftBlockIndex % N != N - 1 && twinBoard.board[leftBlockIndex] != 0) { // LEFT
+        swap(twinBoard, i, leftBlockIndex);
         break;
-      } else if (rightBlock != null) {
-        swap(twinBoard, i, i + 1);
+      } else if (rightBlockIndex < size && rightBlockIndex % N != 0 && twinBoard.board[rightBlockIndex] != 0) { // RIGHT
+        swap(twinBoard, i, rightBlockIndex);
         break;
       }
     }
@@ -113,9 +113,26 @@ public class Board {
   }
 
   // does this board equal y?
-  public boolean equals(Object y) {
-    Board that = (Board) y;
-    return Arrays.equals(this.board, that.board);
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+
+    if (o == null)
+      return false;
+
+    if (o.getClass() != this.getClass())
+      return false;
+
+    Board that = (Board) o;
+
+    if (this.dimension() != that.dimension())
+      return false;
+
+    if (Arrays.equals(this.board, that.board))
+      return true;
+
+    return false;
   }
 
   // all neighboring boards
@@ -130,32 +147,32 @@ public class Board {
       }
     }
 
-    Integer topBlock = (zeroIndex - N >= 0 && board[zeroIndex - N] != 0) ? board[zeroIndex - N] : null;
-    Integer bottomBlock = (zeroIndex + N < size && board[zeroIndex + N] != 0) ? board[zeroIndex + N] : null;
-    Integer leftBlock = (zeroIndex - 1 >= 0 && board[zeroIndex - 1] != 0) ? board[zeroIndex - 1] : null;
-    Integer rightBlock = (zeroIndex + 1 < size && board[zeroIndex + 1] != 0) ? board[zeroIndex + 1] : null;
+    int topIndex = zeroIndex - N;
+    int bottomIndex = zeroIndex + N;
+    int leftBlockIndex = zeroIndex - 1;
+    int rightBlockIndex = zeroIndex + 1;
 
-    if (topBlock != null) {
-      Board topBoard = new Board(this.board, this.N);
-      swap(topBoard, zeroIndex, zeroIndex - N);
+    if (topIndex >= 0 && board[topIndex] != 0) { // TOP
+      Board topBoard = new Board(this.board,  this.N);
+      swap(topBoard, zeroIndex, topIndex);
       boardStack.push(topBoard);
     }
 
-    if (bottomBlock != null) {
+    if (bottomIndex < size && board[bottomIndex] != 0) { // BOTTOM
       Board bottomBoard = new Board(this.board, this.N);
-      swap(bottomBoard, zeroIndex, zeroIndex + N);
+      swap(bottomBoard, zeroIndex, bottomIndex);
       boardStack.push(bottomBoard);
     }
 
-    if (leftBlock != null) {
+    if (leftBlockIndex >= 0 && leftBlockIndex % N != N - 1 && board[leftBlockIndex] != 0) { // LEFT
       Board leftBoard = new Board(this.board, this.N);
-      swap(leftBoard, zeroIndex, zeroIndex - 1);
+      swap(leftBoard, zeroIndex, leftBlockIndex);
       boardStack.push(leftBoard);
     }
 
-    if (rightBlock != null) {
+    if (rightBlockIndex < size && rightBlockIndex % N != 0 && board[rightBlockIndex] != 0) { // RIGHT
       Board rightBoard = new Board(this.board, this.N);
-      swap(rightBoard, zeroIndex, zeroIndex + 1);
+      swap(rightBoard, zeroIndex, rightBlockIndex);
       boardStack.push(rightBoard);
     }
 
@@ -213,27 +230,37 @@ public class Board {
   // unit tests (not graded)
   public static void main(String[] args) {
 
-    int[][] initialBlocks = new int[][] {
-            {8,0,3},
-            {4,1,2},
-            {7,6,5}
-    };
+    /***********
+       {8,0,3},
+       {4,1,2},
+       {7,6,5}
+     ***********/
+    int[][] initialBlocks = new int[][] {{8, 0, 3}, {4, 1, 2}, {7, 6, 5}};
 
-    int[][] copyOfInitialBlocks = new int[][] {
-            {8,0,3},
-            {4,1,2},
-            {7,6,5}
-    };
+    /***********
+       {8,0,3},
+       {4,1,2},
+       {7,6,5}
+     ***********/
+    int[][] copyOfInitialBlocks = new int[][] {{8, 0, 3}, {4, 1, 2}, {7, 6, 5}};
 
-    int[][] goalBlocks = new int[][] {
-            {1,2,3},
-            {4,5,6},
-            {7,8,0}
-    };
+    /***********
+       {1,2,3},
+       {4,5,6},
+       {7,8,0}
+     ***********/
+    int[][] goalBlocks = new int[][] {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
+
+    /***********
+       {1,0},
+       {2,3}
+     ***********/
+    int[][] unsolvableBlocks = new int[][] {{1, 0}, {2, 3}};
 
     Board board = new Board(initialBlocks);
     Board boardCopy = new Board(copyOfInitialBlocks);
     Board goalBoard = new Board(goalBlocks);
+    Board unsolvableBoard = new Board(unsolvableBlocks);
 
     System.out.println(board.toString());
 
@@ -254,5 +281,8 @@ public class Board {
     for (Board neighbor : board.neighbors()) {
       System.out.println(neighbor);
     }
+
+    System.out.println(unsolvableBoard.twin().toString());
+    System.out.println(unsolvableBoard.neighbors());
   }
 }

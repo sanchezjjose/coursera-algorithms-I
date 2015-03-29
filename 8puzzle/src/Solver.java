@@ -1,15 +1,54 @@
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 public class Solver {
 
-  Board initial;
-  Stack<Board> solutionBoards = new Stack<Board>();
+  private SearchNode goalNode;
 
   // find a solution to the initial board (using the A* algorithm)
   public Solver(Board initial) {
-    this.initial = initial;
+
+    MinPQ<SearchNode> minPQ = new MinPQ<SearchNode>();
+    minPQ.insert(new SearchNode(initial, null, 0));
+    SearchNode currentNode = minPQ.delMin();
+
+    MinPQ<SearchNode> minPQTwin = new MinPQ<SearchNode>();
+    minPQTwin.insert(new SearchNode(initial.twin(), null, 0));
+    SearchNode currentNodeTwin = minPQTwin.delMin();
+
+    while (!(currentNode.getBoard().isGoal()
+            || currentNodeTwin.getBoard().isGoal())) {
+
+      // Initial
+      for (Board neighbor : currentNode.getBoard().neighbors()) {
+        if (currentNode.getPreviousNode() != null && neighbor.equals(currentNode.getPreviousNode().getBoard())) {
+          continue;
+        }
+
+        minPQ.insert(new SearchNode(neighbor, currentNode, currentNode.getMoves() + 1));
+      }
+
+      if (minPQ.size() > 0) {
+        currentNode = minPQ.delMin();
+      }
+
+      // Twin
+      for (Board neighbor : currentNodeTwin.getBoard().neighbors()) {
+        if (currentNodeTwin.getPreviousNode() != null && neighbor.equals(currentNodeTwin.getPreviousNode().getBoard())) {
+          continue;
+        }
+
+        minPQTwin.insert(new SearchNode(neighbor, currentNodeTwin, currentNodeTwin.getMoves() + 1));
+      }
+
+      if (minPQ.size() > 0) {
+        currentNodeTwin = minPQTwin.delMin();
+      }
+    }
+
+    if (currentNode.getBoard().isGoal()) {
+      goalNode = currentNode;
+    } else {
+      goalNode = null;
+    }
   }
 
   private class SearchNode implements Comparable<SearchNode> {
@@ -36,7 +75,7 @@ public class Solver {
     }
 
     public int getPriority() {
-      return board.manhattan();
+      return board.manhattan() + moves;
     }
 
     @Override
@@ -47,13 +86,13 @@ public class Solver {
 
   // is the initial board solvable?
   public boolean isSolvable() {
-    return false;
+    return goalNode != null;
   }
 
   // min number of moves to solve initial board; -1 if unsolvable
   public int moves() {
     if (isSolvable()) {
-      return solutionBoards.size();
+      return goalNode.getMoves();
     }
 
     return -1;
@@ -62,35 +101,16 @@ public class Solver {
   // sequence of boards in a shortest solution; null if unsolvable
   public Iterable<Board> solution() {
     if (isSolvable()) {
-      MinPQ<SearchNode> searchNodePQ = new MinPQ<SearchNode>();
-      Iterator<SearchNode> searchNodeItr = searchNodePQ.iterator();
-      Set<Integer> boardHashCodes = new HashSet<Integer>();
+      Stack<Board> boards = new Stack<Board>();
 
-      searchNodePQ.insert(new SearchNode(initial, null, 0));
-
-      while (searchNodeItr.hasNext()) {
-        SearchNode currentSearchNode = searchNodeItr.next();
-        SearchNode minSearchNode = searchNodePQ.delMin();
-
-        solutionBoards.push(minSearchNode.getBoard());
-        boardHashCodes.add(currentSearchNode.hashCode());
-
-        if (minSearchNode.getBoard().isGoal()) {
-          break;
-        }
-
-        for (Board b : currentSearchNode.getBoard().neighbors()) {
-          if (!boardHashCodes.contains(b.hashCode())) {
-            searchNodePQ.insert(new SearchNode(b, currentSearchNode, currentSearchNode.getMoves() + 1));
-          }
-        }
+      for (SearchNode node = goalNode; node != null; node = node.getPreviousNode()) {
+        boards.push(node.getBoard());
       }
 
-      return solutionBoards;
-
-    } else {
-      return null;
+      return boards;
     }
+
+    return null;
   }
 
   // solve a slider puzzle (given below)
@@ -117,7 +137,6 @@ public class Solver {
       for (Board board : solver.solution())
         StdOut.println(board);
     }
-
   }
 
 }
